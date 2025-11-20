@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.inventory.pl_project.controllers.ClientController">
+
+    <top>
+        <Label text="Client Module" style="-fx-font-size: 24px; -fx-font-weight: bold;">
+            <BorderPane.margin>
+                <Insets top="10.0" bottom="10.0" left="10.0"/>
+            </BorderPane.margin>
+        </Label>
+    </top>
+
+    <center>
+        <TabPane tabClosingPolicy="UNAVAILABLE">
+
+            <!-- CLIENT REGISTRATION TAB -->
+            <Tab text="Client Management">
+                <SplitPane dividerPositions="0.6">
+                    <!-- Client Table -->
+                    <VBox spacing="10">
+                        <padding>
+                            <Insets top="10.0" bottom="10.0" left="10.0" right="10.0"/>
+                        </padding>
+
+                        <Label text="Client List" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                        <TableView fx:id="clientTable" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="clientIdColumn" text="ID" prefWidth="120"/>
+                                <TableColumn fx:id="clientNameColumn" text="Name" prefWidth="150"/>
+                                <TableColumn fx:id="clientEmailColumn" text="Email" prefWidth="180"/>
+                                <TableColumn fx:id="clientPhoneColumn" text="Phone" prefWidth="130"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+
+                    <!-- Client Form -->
+                    <VBox spacing="15">
+                        <padding>
+                            <Insets top="10.0" bottom="10.0" left="10.0" right="10.0"/>
+                        </padding>
+
+                        <Label text="Client Details" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                        <GridPane hgap="10" vgap="12">
+                            <Label text="Name:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                            <TextField fx:id="clientNameField" GridPane.columnIndex="1" GridPane.rowIndex="0"
+                                       prefWidth="250" promptText="Full name"/>
+
+                            <Label text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                            <TextField fx:id="clientEmailField" GridPane.columnIndex="1" GridPane.rowIndex="1"
+                                       prefWidth="250" promptText="email@example.com"/>
+
+                            <Label text="Phone:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                            <TextField fx:id="clientPhoneField" GridPane.columnIndex="1" GridPane.rowIndex="2"
+                                       prefWidth="250" promptText="Phone number"/>
+
+                            <Label text="Address:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                            <TextArea fx:id="clientAddressField" GridPane.columnIndex="1" GridPane.rowIndex="3"
+                                      prefWidth="250" prefHeight="60" promptText="Full address"/>
+                        </GridPane>
+
+                        <HBox spacing="10" alignment="CENTER">
+                            <Button text="Register Client" onAction="#handleRegisterClient"
+                                    style="-fx-background-color: #27ae60; -fx-text-fill: white;" prefWidth="130"/>
+                            <Button text="Update" onAction="#handleUpdateClient"
+                                    style="-fx-background-color: #3498db; -fx-text-fill: white;" prefWidth="130"/>
+                            <Button text="Delete" onAction="#handleDeleteClient"
+                                    style="-fx-background-color: #e74c3c; -fx-text-fill: white;" prefWidth="130"/>
+                        </HBox>
+                    </VBox>
+                </SplitPane>
+            </Tab>
+
+            <!-- PURCHASE ORDERS TAB -->
+            <Tab text="Purchase Orders">
+                <SplitPane dividerPositions="0.5" orientation="VERTICAL">
+
+                    <!-- Order Creation Section -->
+                    <VBox spacing="15">
+                        <padding>
+                            <Insets top="15.0" bottom="15.0" left="15.0" right="15.0"/>
+                        </padding>
+
+                        <Label text="Create Purchase Order" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                        <HBox spacing="15" alignment="CENTER_LEFT">
+                            <Label text="Client:"/>
+                            <ComboBox fx:id="orderClientComboBox" prefWidth="200" promptText="Select client"/>
+                        </HBox>
+
+                        <Separator/>
+
+                        <Label text="Add Items to Order" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label text="Product:"/>
+                            <ComboBox fx:id="orderProductComboBox" prefWidth="200" promptText="Select product"/>
+
+                            <Label text="Quantity:"/>
+                            <TextField fx:id="orderQuantityField" prefWidth="80" promptText="Qty"/>
+
+                            <Button text="Add Item" onAction="#handleAddItemToOrder"
+                                    style="-fx-background-color: #16a085; -fx-text-fill: white;"/>
+                            <Button text="Remove Item" onAction="#handleRemoveItemFromOrder"
+                                    style="-fx-background-color: #c0392b; -fx-text-fill: white;"/>
+                        </HBox>
+
+                        <HBox spacing="20">
+                            <!-- Order Items List -->
+                            <VBox spacing="5" HBox.hgrow="ALWAYS">
+                                <Label text="Order Items:" style="-fx-font-weight: bold;"/>
+                                <ListView fx:id="orderItemsList" prefHeight="150"/>
+                            </VBox>
+                        </HBox>
+
+                        <HBox spacing="15" alignment="CENTER">
+                            <Label fx:id="totalAmountLabel" text="Total: $0.00"
+                                   style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #27ae60;"/>
+                        </HBox>
+
+                        <HBox spacing="10" alignment="CENTER">
+                            <Button text="Create Order" onAction="#handleCreateOrder"
+                                    style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-font-size: 14px;"
+                                    prefWidth="200" prefHeight="35"/>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Order History Section -->
+                    <VBox spacing="10">
+                        <padding>
+                            <Insets top="15.0" bottom="15.0" left="15.0" right="15.0"/>
+                        </padding>
+
+                        <Label text="Order History" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                        <TableView fx:id="orderTable" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="orderIdColumn" text="Order ID" prefWidth="150"/>
+                                <TableColumn fx:id="orderClientColumn" text="Client" prefWidth="150"/>
+                                <TableColumn fx:id="orderAmountColumn" text="Total Amount" prefWidth="120"/>
+                                <TableColumn fx:id="orderDateColumn" text="Date" prefWidth="180"/>
+                                <TableColumn fx:id="orderStatusColumn" text="Status" prefWidth="100"/>
+                            </columns>
+                        </TableView>
+
+                        <HBox spacing="10" alignment="CENTER">
+                            <Button text="Generate Invoice" onAction="#handleGenerateInvoice"
+                                    style="-fx-background-color: #34495e; -fx-text-fill: white;"
+                                    prefWidth="150"/>
+                        </HBox>
+                    </VBox>
+
+                </SplitPane>
+            </Tab>
+
+            <!-- ORDER REPORTS TAB -->
+            <Tab text="Order Reports">
+                <VBox spacing="20">
+                    <padding>
+                        <Insets top="20.0" bottom="20.0" left="20.0" right="20.0"/>
+                    </padding>
+
+                    <Label text="Client Order Reports" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <Label text="Select Client:"/>
+                        <ComboBox fx:id="reportClientComboBox" prefWidth="250" promptText="Choose a client"/>
+
+                        <Button text="Generate Report" onAction="#handleGenerateOrderReport"
+                                style="-fx-background-color: #8e44ad; -fx-text-fill: white; -fx-font-size: 14px;"
+                                prefWidth="150"/>
+                        <Button text="Clear" onAction="#handleClearOrderReport"
+                                style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-font-size: 14px;"
+                                prefWidth="100"/>
+                    </HBox>
+
+                    <Separator/>
+
+                    <Label text="Report Output:" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+
+                    <TextArea fx:id="orderReportArea" VBox.vgrow="ALWAYS" editable="false"
+                              style="-fx-font-family: 'Courier New'; -fx-font-size: 12px;"/>
+                </VBox>
+            </Tab>
+
+        </TabPane>
+    </center>
+</BorderPane>
