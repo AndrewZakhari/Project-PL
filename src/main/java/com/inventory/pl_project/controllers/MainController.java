@@ -1,5 +1,6 @@
 package com.inventory.pl_project.controllers;
 
+import com.inventory.pl_project.Main;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -26,7 +27,7 @@ public class MainController {
     @FXML
     private void openProductModule() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/product.fxml"));
+            FXMLLoader loader = new FXMLLoader(Main.class.getResource("/fxml/product.fxml"));
             Parent root = loader.load();
             Stage stage = new Stage();
             stage.setTitle("Product Module");
@@ -40,7 +41,7 @@ public class MainController {
     @FXML
     private void openAdminModule() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/admin.fxml"));
+            FXMLLoader loader = new FXMLLoader(Main.class.getResource("/fxml/admin.fxml"));
             Parent root = loader.load();
             Stage stage = new Stage();
             stage.setTitle("Admin Module");
@@ -54,7 +55,7 @@ public class MainController {
     @FXML
     private void openClientModule() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/client.fxml"));
+            FXMLLoader loader = new FXMLLoader(Main.class.getResource("/fxml/client.fxml"));
             Parent root = loader.load();
             Stage stage = new Stage();
             stage.setTitle("Client Module");

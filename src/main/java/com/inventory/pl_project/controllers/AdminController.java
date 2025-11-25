@@ -1,20 +1,31 @@
 package com.inventory.pl_project.controllers;
 
-import com.inventory.pl_project.models.Category;
-import com.inventory.pl_project.models.Supplier;
-import com.inventory.pl_project.models.Offer;
-import com.inventory.pl_project.models.Product;
-import com.inventory.pl_project.services.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import com.inventory.pl_project.models.Category;
+import com.inventory.pl_project.models.Offer;
+import com.inventory.pl_project.models.Product;
+import com.inventory.pl_project.models.Supplier;
+import com.inventory.pl_project.services.CategoryService;
+import com.inventory.pl_project.services.ProductService;
+import com.inventory.pl_project.services.ReportService;
+import com.inventory.pl_project.services.SupplierService;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 public class AdminController {
 
@@ -24,7 +35,7 @@ public class AdminController {
     @FXML private TableColumn<Category, String> catNameColumn;
     @FXML private TableColumn<Category, String> catDescColumn;
     @FXML private TextField categoryNameField;
-    @FXML private TextField categoryDescField;
+    @FXML private TextArea categoryDescField;
 
     // Supplier Section
     @FXML private TableView<Supplier> supplierTable;
@@ -36,7 +47,7 @@ public class AdminController {
     @FXML private TextField supplierContactField;
     @FXML private TextField supplierEmailField;
     @FXML private TextField supplierPhoneField;
-    @FXML private TextField supplierAddressField;
+    @FXML private TextArea supplierAddressField;
 
     // Offer Section
     @FXML private ComboBox<String> offerProductComboBox;
@@ -127,7 +138,7 @@ public class AdminController {
         selectedCategory.setDescription(categoryDescField.getText());
 
         categoryService.updateCategory(selectedCategory);
-        loadCategories();
+        categoryTable.refresh();
         clearCategoryFields();
         showAlert("Success", "Category updated successfully!", Alert.AlertType.INFORMATION);
     }
@@ -222,7 +233,7 @@ public class AdminController {
         selectedSupplier.setAddress(supplierAddressField.getText());
 
         supplierService.updateSupplier(selectedSupplier);
-        loadSuppliers();
+        supplierTable.refresh();
         clearSupplierFields();
         showAlert("Success", "Supplier updated successfully!", Alert.AlertType.INFORMATION);
     }

@@ -1,0 +1,12 @@
+[
+  {
+    "id": "cat-1",
+    "name": "Electronics",
+    "description": "Electronic devices and accessories"
+  },
+  {
+    "id": "cat-2",
+    "name": "Books",
+    "description": "Printed and electronic books"
+  }
+]

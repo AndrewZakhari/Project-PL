@@ -2,9 +2,14 @@ package com.inventory.pl_project.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+
 import java.io.*;
 import java.lang.reflect.Type;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -17,39 +22,66 @@ public class FileManager {
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
             .create();
 
-    private static final String DATA_DIR = "src/main/resources/data/";
+    private static final String DATA_DIR_NAME = "data";
+    private static Path DATA_PATH;
+
+    static {
+        try {
+            // Get the path of the directory where the JAR is located
+            URL location = FileManager.class.getProtectionDomain().getCodeSource().getLocation();
+            Path jarPath = Paths.get(location.toURI()).getParent();
+            DATA_PATH = jarPath.resolve(DATA_DIR_NAME);
+
+            if (!Files.exists(DATA_PATH)) {
+                Files.createDirectories(DATA_PATH);
+            }
+        } catch (URISyntaxException | IOException e) {
+            e.printStackTrace();
+            // Fallback to a local directory if running in an IDE or other environment
+            DATA_PATH = Paths.get(DATA_DIR_NAME);
+            try {
+                if (!Files.exists(DATA_PATH)) {
+                    Files.createDirectories(DATA_PATH);
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
 
     public static <T> List<T> readFromFile(String filename, Type typeToken) {
-        File file = new File(DATA_DIR + filename);
+        Path filePath = DATA_PATH.resolve(filename);
+        System.out.println("Attempting to read from: " + filePath.toAbsolutePath());
 
-        if (!file.exists()) {
-            try {
-                file.getParentFile().mkdirs();
-                file.createNewFile();
-                writeToFile(filename, new ArrayList<>());
-            } catch (IOException e) {
-                e.printStackTrace();
+        // If the file doesn't exist in the external data directory, try reading from resources
+        if (!Files.exists(filePath)) {
+            try (InputStream inputStream = FileManager.class.getResourceAsStream("/data/" + filename);
+                 Reader reader = new InputStreamReader(inputStream)) {
+                List<T> data = gson.fromJson(reader, typeToken);
+                if (data != null) {
+                    // Write the data to the external directory for future use
+                    writeToFile(filename, data);
+                    return data;
+                }
+            } catch (Exception e) {
+                // File not found in resources, proceed to create a new one
             }
-            return new ArrayList<>();
         }
 
-        try (Reader reader = new FileReader(file)) {
+        // Read from the external data directory
+        try (Reader reader = new FileReader(filePath.toFile())) {
             List<T> data = gson.fromJson(reader, typeToken);
             return data != null ? data : new ArrayList<>();
         } catch (IOException e) {
-            e.printStackTrace();
+            // If reading fails, return an empty list
             return new ArrayList<>();
         }
     }
 
     public static <T> void writeToFile(String filename, List<T> data) {
-        File file = new File(DATA_DIR + filename);
-
-        try {
-            file.getParentFile().mkdirs();
-            try (Writer writer = new FileWriter(file)) {
-                gson.toJson(data, writer);
-            }
+        Path filePath = DATA_PATH.resolve(filename);
+        try (Writer writer = new FileWriter(filePath.toFile())) {
+            gson.toJson(data, writer);
         } catch (IOException e) {
             e.printStackTrace();
         }

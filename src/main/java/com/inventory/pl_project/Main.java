@@ -12,11 +12,11 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         // Try to load FXML
-        URL fxmlLocation = getClass().getResource("/fxml/main.fxml");
+        URL fxmlLocation = Main.class.getResource("/fxml/main.fxml");
 
         if (fxmlLocation == null) {
             System.err.println("Cannot find main.fxml!");
-            System.err.println("Looking in: " + getClass().getResource("/"));
+            System.err.println("Looking in: " + Main.class.getResource("/"));
 
             // Create a simple UI without FXML as fallback
             createSimpleUI(primaryStage);
@@ -59,7 +59,7 @@ public class Main extends Application {
     private void openProductModule() {
         try {
             Stage stage = new Stage();
-            URL fxmlLocation = getClass().getResource("/fxml/product.fxml");
+            URL fxmlLocation = Main.class.getResource("/fxml/product.fxml");
             if (fxmlLocation != null) {
                 Parent root = FXMLLoader.load(fxmlLocation);
                 stage.setTitle("Product Module");
@@ -77,7 +77,7 @@ public class Main extends Application {
     private void openAdminModule() {
         try {
             Stage stage = new Stage();
-            URL fxmlLocation = getClass().getResource("/fxml/admin.fxml");
+            URL fxmlLocation = Main.class.getResource("/fxml/admin.fxml");
             if (fxmlLocation != null) {
                 Parent root = FXMLLoader.load(fxmlLocation);
                 stage.setTitle("Admin Module");
@@ -95,7 +95,7 @@ public class Main extends Application {
     private void openClientModule() {
         try {
             Stage stage = new Stage();
-            URL fxmlLocation = getClass().getResource("/fxml/client.fxml");
+            URL fxmlLocation = Main.class.getResource("/fxml/client.fxml");
             if (fxmlLocation != null) {
                 Parent root = FXMLLoader.load(fxmlLocation);
                 stage.setTitle("Client Module");
