@@ -8,7 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileService {
-  private String DIR = "../data";
+  private String DIR = "data/";
+
+  try {
+    Files.createDirectories(Paths.get(DIR));
+  } catch (Exception e) {
+    e.printStackTrace();
+  }
   
   public List<String> readAllLines(String fileName) {
     try {
@@ -17,7 +23,7 @@ public class FileService {
      if(Files.exists(path)){
        return Files.readAllLines(path);
      }else {
-       reutrn new ArrayList<>();
+       return new ArrayList<>();
      }
     } catch (Exception e) {
       e.printStackTrace();
@@ -27,7 +33,7 @@ public class FileService {
 
   public void appendToFile(String fileName, String data){
     try {
-      java.nio.file.Path path = Paths.get( DIR + filename);
+      java.nio.file.Path path = Paths.get( DIR + fileName);
 
       String dataWithNewLine = data + System.lineSeperator();
       
@@ -35,7 +41,7 @@ public class FileService {
       Files.write(path, dataWithNewLine.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
       
     } catch (Exception e) {
-     System.err.println("Error writing to file: ", fileName) ;
+     System.err.println("Error writing to file: " +  fileName) ;
      e.printStackTrace();
     }
   }

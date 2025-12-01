@@ -2,7 +2,16 @@ package com.inventory.model;
 
 public class Category {
     private String name;
-    private String description;
+    
 
-    // Getters and Setters
-}
+    public Category(String name) {
+      this.name = name;
+    }
+
+    public String getName(){ return this.name; }
+
+    public void setName(String name) { this.name = name; }
+
+    @Override
+    public String toString() { return name; }
+ }

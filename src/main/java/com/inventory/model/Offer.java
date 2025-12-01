@@ -8,5 +8,16 @@ public class Offer {
     private LocalDate startDate;
     private LocalDate endDate;
 
-    // Getters and Setters
+    public Offer(String productName, double discountPercentage, LocalDate startDate, LocalDate endDate){
+      this.productName = productName;
+      this.discountPercentage = discountPercentage;
+      this.startDate = startDate;
+      this.endDate = endDate;
+    }
+
+
+    @Override
+    public String toString() {
+      return productName + "," + discountPercentage + "," + startDate + "," + endDate;
+    }
 }
