@@ -12,7 +12,7 @@ public class ProductService {
   private static final String FILE_NAME = "products.txt";
 
     public void addProduct(Product product) {
-        FileService.appendToFile(FILE_NAME, product.toString());
+        fileService.appendToFile(FILE_NAME, product.toString());
     }
 
     public List<Product> getAllProducts() {
@@ -61,10 +61,10 @@ public class ProductService {
     }
 
     public List<Product> searchByCategory(String category) {
-      return getAllProducts().steam().filter(p -> p.getExpirationDate().equals(date)).collect(Collectors.toList());
+      return getAllProducts().stream().filter(p -> p.getCategory().equalsIgnoreCase(category)).collect(Collectors.toList());
     }
 
-    public void getExpiringProducts() {
+    public List<Product> getExpiringProducts() {
        LocalDate today = LocalDate.now();
        LocalDate warningDate = today.plusDays(7);
 

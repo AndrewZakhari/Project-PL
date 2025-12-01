@@ -18,7 +18,7 @@ public class Order {
       this.quantity = quantity;
     }
 
-    public int getOrderId() {return this.orderId;}
+    public String getOrderId() {return this.orderId;}
     public String getClientEmail() { return this.clientEmail;}
     public String getProductName() {return this.productName;} 
     public LocalDate getOrderDate() { return this.orderDate; }
@@ -26,7 +26,7 @@ public class Order {
 
     @Override
     public String toString() {
-      return orderId + "," + clientEmail + "," + productName + "," + quantity + "," + orderDate;
+      return orderId + "," + clientEmail + "," + productName + "," + orderDate + "," + quantity;
     }
 
     public static Order fromCsv(String csvLine) {
@@ -35,8 +35,8 @@ public class Order {
           parts[0],
           parts[1],
           parts[2],
-          Integer.parseInt(parts[3]),
-          LocalDate.parse(parts[4])
+          LocalDate.parse(parts[3]),
+          Integer.parseInt(parts[4])
           );
     }
 }

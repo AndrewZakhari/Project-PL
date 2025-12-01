@@ -1,0 +1,110 @@
+/* Modern Dark Theme */
+.root {
+    -fx-background-color: #2b2b2b;
+    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+.label {
+    -fx-text-fill: #e0e0e0;
+    -fx-font-size: 14px;
+}
+
+.header-label {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+    -fx-padding: 0 0 20 0;
+}
+
+.sub-header {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #4fc3f7; /* Light Blue */
+    -fx-padding: 10 0 5 0;
+}
+
+.button {
+    -fx-background-color: #3d3d3d;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-background-radius: 5;
+    -fx-padding: 10 20;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #505050;
+}
+
+.button:pressed {
+    -fx-background-color: #4fc3f7;
+    -fx-text-fill: #2b2b2b;
+}
+
+.primary-button {
+    -fx-background-color: #4fc3f7;
+    -fx-text-fill: #2b2b2b;
+    -fx-font-weight: bold;
+}
+
+.primary-button:hover {
+    -fx-background-color: #8bf6ff;
+}
+
+.text-field, .text-area, .date-picker .text-field {
+    -fx-background-color: #3d3d3d;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: #888888;
+    -fx-background-radius: 5;
+    -fx-padding: 8;
+}
+
+.text-field:focused, .text-area:focused {
+    -fx-border-color: #4fc3f7;
+    -fx-border-radius: 5;
+}
+
+.separator *.line {
+    -fx-border-color: #505050;
+    -fx-border-width: 1;
+}
+
+/* Table View Styling */
+.table-view {
+    -fx-background-color: #3d3d3d;
+    -fx-border-color: #505050;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #505050;
+}
+
+.table-view .column-header, .table-view .filler {
+    -fx-background-color: #505050;
+    -fx-border-color: #3d3d3d;
+    -fx-border-width: 0 1 0 0;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #ffffff; /* White text for headers to be visible on dark grey */
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.table-row-cell {
+    -fx-background-color: #2b2b2b;
+    -fx-text-fill: #e0e0e0;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #333333;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #4fc3f7;
+    -fx-text-fill: #2b2b2b;
+}
+
+.table-row-cell:selected .text {
+    -fx-fill: #2b2b2b; 
+}

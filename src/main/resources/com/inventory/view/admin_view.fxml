@@ -1,18 +1,90 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Region?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.inventory.controller.AdminController">
+<HBox spacing="30.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.inventory.controller.AdminController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
     </padding>
-    <Label text="Admin Module"/>
-    <Button text="Manage Categories" onAction="#handleAddCategory"/>
-    <Button text="Manage Suppliers" onAction="#handleAddSupplier"/>
-    <Button text="Generate Reports" onAction="#handleGenerateReports"/>
-    <Button text="Add Offer" onAction="#handleAddOffer"/>
-    <Button text="Back to Main Menu" onAction="#switchToMain"/>
-</VBox>
+
+    <VBox minWidth="350" spacing="15.0">
+        <Label styleClass="header-label" text="Admin Dashboard" />
+
+        <!-- Categories -->
+        <Label styleClass="sub-header" text="Manage Categories" />
+        <HBox spacing="10">
+            <TextField fx:id="categoryNameField" promptText="New Category Name" HBox.hgrow="ALWAYS" />
+            <Button onAction="#handleAddCategory" text="Add" />
+        </HBox>
+
+        <Separator />
+
+        <!-- Suppliers -->
+        <Label styleClass="sub-header" text="Manage Suppliers" />
+        <GridPane hgap="10" vgap="10">
+            <columnConstraints>
+                <ColumnConstraints minWidth="80" />
+                <ColumnConstraints hgrow="ALWAYS" />
+            </columnConstraints>
+            <Label text="Name:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+            <TextField fx:id="supplierNameField" promptText="Supplier Name" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+            <Label text="Contact:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+            <TextField fx:id="supplierContactField" promptText="Contact Info" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        </GridPane>
+        <Button maxWidth="Infinity" onAction="#handleAddSupplier" text="Add Supplier" />
+
+        <Separator />
+
+        <!-- Offers -->
+        <Label styleClass="sub-header" text="Special Offers" />
+        <HBox spacing="10">
+            <TextField fx:id="offerDetailsField" promptText="Offer Details" HBox.hgrow="ALWAYS" />
+            <Button onAction="#handleAddOffer" text="Add" />
+        </HBox>
+        
+        <Separator />
+        
+        <Button maxWidth="Infinity" onAction="#handleGenerateReports" styleClass="primary-button" text="Generate All Reports" />
+        
+        <!-- Spacer to push the back button to the bottom if needed, or just ensure it's visible -->
+        <Region VBox.vgrow="ALWAYS" />
+        
+        <Button onAction="#switchToMain" style="-fx-background-color: transparent; -fx-text-fill: #888888; -fx-padding: 10 0 0 0;" text="← Back to Menu" />
+    </VBox>
+
+    <!-- Right Side: Tabs -->
+    <TabPane fx:id="adminTabPane" tabClosingPolicy="UNAVAILABLE" HBox.hgrow="ALWAYS">
+        <Tab text="Categories">
+            <ListView fx:id="categoryList" />
+        </Tab>
+        <Tab text="Suppliers">
+            <TableView fx:id="supplierTable">
+                <columns>
+                    <TableColumn fx:id="colSupName" text="Name" />
+                    <TableColumn fx:id="colSupContact" text="Contact" />
+                </columns>
+                <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                </columnResizePolicy>
+            </TableView>
+        </Tab>
+        <Tab fx:id="reportsTab" text="Reports">
+            <TextArea fx:id="reportArea" editable="false" style="-fx-font-family: 'Consolas', monospace;" />
+        </Tab>
+    </TabPane>
+</HBox>

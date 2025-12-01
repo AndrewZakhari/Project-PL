@@ -8,12 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileService {
-  private String DIR = "data/";
+  private final String DIR = "data/";
 
+  public FileService() {
   try {
     Files.createDirectories(Paths.get(DIR));
   } catch (Exception e) {
     e.printStackTrace();
+  }
   }
   
   public List<String> readAllLines(String fileName) {
@@ -35,7 +37,7 @@ public class FileService {
     try {
       java.nio.file.Path path = Paths.get( DIR + fileName);
 
-      String dataWithNewLine = data + System.lineSeperator();
+      String dataWithNewLine = data + System.lineSeparator();
       
       // StandardOpenOption.CREATE here creates the file if it's missing APPEND appends to the end of the file
       Files.write(path, dataWithNewLine.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);

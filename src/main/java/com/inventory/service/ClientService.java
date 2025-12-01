@@ -20,7 +20,7 @@ public class ClientService {
         fileService.appendToFile(CLIENTS_FILE, client.toString());
     }
 
-    public void getAllClients(){
+    public List<Client> getAllClients(){
       List<String> lines = fileService.readAllLines(CLIENTS_FILE);
       List<Client> clients = new ArrayList<>();
       for (String line: lines) {
@@ -31,8 +31,8 @@ public class ClientService {
       return clients;
     }
 
-    public void getAllOrders() {
-      List<String> lines = fileService.readAllLines(CLIENTS_FILE);
+    public List<Order> getAllOrders() {
+      List<String> lines = fileService.readAllLines(ORDERS_FILE);
       List<Order> orders = new ArrayList<>();
       for (String line: lines) {
         if (!line.trim().isEmpty()){
@@ -79,8 +79,16 @@ public class ClientService {
       emailService.sendEmail(order.getClientEmail(), subject, body);
     }
 
-    public void generateOrderReport(Client client) {
-        // Analyze orders for client
+    public String generateOrderReport(Client client) {
+       List<Order> orders = getAllOrders();
+       StringBuilder report = new StringBuilder("---" + " Order Report for " + client.getName() + "---" + "\n");
+       for ( Order order: orders) {
+         if (order.getClientEmail().equals(client.getEmail())){
+           report.append(order.toString()).append("\n");
+         }
+       }
+
+       return report.toString();
     }
 
     
