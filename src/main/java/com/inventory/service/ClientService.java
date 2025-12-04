@@ -6,11 +6,13 @@ import com.inventory.model.Order;
 public class ClientService {
 
     public void registerClient(Client client) {
-        // File management
+        
+
+        
     }
 
     public void editClient(Client client) {
-        // File management
+     
     }
 
     public void createPurchaseOrder(Order order) {
@@ -29,3 +31,4 @@ public class ClientService {
         // Sending emails using java
     }
 }
+
