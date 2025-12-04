@@ -5,7 +5,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class ProductService {
+    private List<Product> products = new ArrayList<>();
   // add
+
   public void addProduct(Product p) {
         products.add(p);
         System.out.println("Product added successfully!");
@@ -114,8 +116,8 @@ public class ProductService {
         }
         return result;
     }
-}
 
+}
 
 
 
