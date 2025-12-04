@@ -15,4 +15,5 @@
     <Button text="Delete Product" onAction="#handleDeleteProduct"/>
     <Button text="Search Product" onAction="#handleSearch"/>
     <Button text="Back to Main Menu" onAction="#switchToMain"/>
+    <Button text"xyz" onAction="#switch"/>
 </VBox>
