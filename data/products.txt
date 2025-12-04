@@ -1,0 +1,2 @@
+Something,Electornics,2025-12-24,10,10.4
+else,adsfas,2025-12-10,1,10.0
