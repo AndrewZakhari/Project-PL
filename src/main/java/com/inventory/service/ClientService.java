@@ -1,193 +1,110 @@
 package com.inventory.service;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.inventory.model.Client;
-import com.inventory.model.Order;
 
 public class ClientService {
 
-    private static final String CLIENT_FILE = "data/clients.txt";
-    private static final String ORDER_FILE = "data/orders.txt";
+    // FileService in your workspace expects a path fragment; pass with leading slash
+    private static final String CLIENT_FILE = "/clients.txt";
 
-    private void ensureDataFileExists(String filePath) throws IOException {
-        Path p = Paths.get(filePath);
-        Path parent = p.getParent();
-        if (parent != null && !Files.exists(parent)) {
-            Files.createDirectories(parent);
-        }
-        if (!Files.exists(p)) {
-            Files.createFile(p);
-        }
-    }
+    private final FileService fileService = new FileService();
 
+    /**
+     * Register a new client by appending a CSV line to the clients file.
+     */
     public void registerClient(Client client) {
         if (client == null) {
-            throw new IllegalArgumentException("Client cannot be null");
+            throw new IllegalArgumentException("client cannot be null");
         }
 
-        try {
-            ensureDataFileExists(CLIENT_FILE);
-            try (FileWriter writer = new FileWriter(CLIENT_FILE, true)) {
-                writer.write(client.toString() + System.lineSeparator());
-            }
-            System.out.println("Client registered successfully!");
-        } catch (IOException e) {
-            System.out.println("Error saving client: " + e.getMessage());
-        }
+        String line = toCsvLine(client);
+        fileService.appendToFile(CLIENT_FILE, line);
+        System.out.println("Client registered: " + summary(client));
     }
 
-    public void editClient(Client updatedClient) {
+    /**
+     * Edit an existing client. Matches by clientId if available; falls back to email.
+     * Reads all lines, replaces the matching line, then overwrites the file.
+     */
+    public boolean editClient(Client updatedClient) {
         if (updatedClient == null) {
             throw new IllegalArgumentException("updatedClient cannot be null");
         }
 
-        List<String> lines = new ArrayList<>();
+        List<String> all = fileService.readAllLines(CLIENT_FILE);
+        if (all == null) all = new ArrayList<>();
 
-        try {
-            ensureDataFileExists(CLIENT_FILE);
-            List<String> allLines = Files.readAllLines(Paths.get(CLIENT_FILE));
+        String targetId = safeGetClientId(updatedClient);
+        String targetEmail = safeGetEmail(updatedClient);
 
-            for (String line : allLines) {
-                String[] data = line.split(",");
+        boolean changed = false;
+        List<String> out = new ArrayList<>(all.size());
 
-                // defensive: check that ID exists in expected position
-                String existingId = data.length > 4 ? data[4] : "";
-                String updatedId = "";
-                try {
-                    updatedId = updatedClient.getclientId() != null ? updatedClient.getclientId() : "";
-                } catch (Exception e) {
-                    updatedId = "";
-                }
+        for (String line : all) {
+            String[] parts = line.split(",");
+            String existingId = parts.length > 4 ? parts[4].trim() : "";
+            String existingEmail = parts.length > 1 ? parts[1].trim() : "";
 
-                if (!existingId.isEmpty() && existingId.equals(updatedId)) {
-                    lines.add(updatedClient.toString());
-                } else {
-                    lines.add(line);
-                }
+            boolean match = false;
+            if (!targetId.isEmpty() && !existingId.isEmpty()) {
+                match = existingId.equals(targetId);
+            } else if (!targetEmail.isEmpty() && !existingEmail.isEmpty()) {
+                match = existingEmail.equalsIgnoreCase(targetEmail);
             }
 
-            Files.write(Paths.get(CLIENT_FILE), lines);
-            System.out.println("Client updated successfully!");
-
-        } catch (IOException e) {
-            System.out.println("Error editing client: " + e.getMessage());
+            if (match) {
+                out.add(toCsvLine(updatedClient));
+                changed = true;
+            } else {
+                out.add(line);
+            }
         }
+
+        if (changed) {
+            fileService.overwriteFile(CLIENT_FILE, out);
+            System.out.println("Client updated: " + summary(updatedClient));
+        } else {
+            System.out.println("Client to update not found.");
+        }
+
+        return changed;
     }
 
-    public void generateInvoice(Order order, Client client) {
-        if (order == null || client == null) {
-            throw new IllegalArgumentException("Order and Client are required");
-        }
+    // Build CSV line expected by other parts of the app (name,email,address,phone,clientId)
+    private String toCsvLine(Client c) {
+        String name = safeCall(() -> c.getname());
+        String email = safeCall(() -> c.getemail());
+        String address = safeCall(() -> c.getaddress());
+        String phone = safeCall(() -> c.getphoneNumber());
+        String id = safeCall(() -> c.getclientId());
 
-        String fileName;
-        try {
-            // try common getter first, fall back to toString-based name
-            int orderId = -1;
-            try {
-                orderId = order.getOrderId();
-            } catch (Exception e) {
-                // ignore, fallback
-            }
-            fileName = "invoice_" + (orderId >= 0 ? orderId : Math.abs(order.hashCode())) + ".txt";
-
-            ensureDataFileExists(fileName); // ensure path (no parent usually)
-        } catch (IOException e) {
-            System.out.println("Error preparing invoice file: " + e.getMessage());
-            return;
-        }
-
-        try (FileWriter writer = new FileWriter(fileName)) {
-            writer.write("===== INVOICE =====\n");
-
-            // Client info (uses existing getters as in current model)
-            try {
-                writer.write("Client: " + client.getname() + "\n");
-            } catch (Exception e) {
-                writer.write("Client: " + client.toString() + "\n");
-            }
-            try { writer.write("Email: " + client.getemail() + "\n"); } catch (Exception ignored) {}
-            try { writer.write("Address: " + client.getaddress() + "\n"); } catch (Exception ignored) {}
-            try { writer.write("Phone: " + client.getphoneNumber() + "\n\n"); } catch (Exception ignored) {}
-
-            // Order info - try getters, otherwise write toString()
-            try {
-                writer.write("Order ID: " + order.getOrderId() + "\n");
-            } catch (Exception e) {
-                writer.write("Order: " + order.toString() + "\n");
-            }
-
-            // Attempt common order fields if getters exist
-            try { writer.write("Product: " + order.getProductName() + "\n"); } catch (Exception ignored) {}
-            try { writer.write("Quantity: " + order.getQuantity() + "\n"); } catch (Exception ignored) {}
-            try { writer.write("Price: " + order.getPrice() + "\n"); } catch (Exception ignored) {}
-            try { writer.write("Date: " + order.getOrderDate() + "\n"); } catch (Exception ignored) {}
-
-            writer.write("===================\n");
-            System.out.println("Invoice generated: " + fileName);
-        } catch (IOException e) {
-            System.out.println("Error generating invoice: " + e.getMessage());
-        }
+        return String.join(",", name, email, address, phone, id);
     }
 
-    public void createOrder(Order order) {
-        if (order == null) {
-            throw new IllegalArgumentException("Order cannot be null");
-        }
-
-        try {
-            ensureDataFileExists(ORDER_FILE);
-            try (FileWriter writer = new FileWriter(ORDER_FILE, true)) {
-                writer.write(order.toString() + System.lineSeparator());
-            }
-            System.out.println("Order created successfully!");
-        } catch (IOException e) {
-            System.out.println("Error saving order: " + e.getMessage());
-        }
+    // Small helpers to avoid NPEs
+    private String safeGetClientId(Client c) {
+        String v = safeCall(() -> c.getclientId());
+        return v == null ? "" : v.trim();
+    }
+    private String safeGetEmail(Client c) {
+        String v = safeCall(() -> c.getemail());
+        return v == null ? "" : v.trim();
+    }
+    private String summary(Client c) {
+        return safeCall(() -> c.getname()) + " <" + safeCall(() -> c.getemail()) + ">";
     }
 
-    public void generateOrderReport() {
+    // Functional wrapper to call client getters that may be present in your model.
+    private interface SupplierEx { String get() throws Exception; }
+    private String safeCall(SupplierEx s) {
         try {
-            ensureDataFileExists(ORDER_FILE);
-            List<String> orders = Files.readAllLines(Paths.get(ORDER_FILE));
-
-            String fileName = "order_report.txt";
-            try (FileWriter writer = new FileWriter(fileName)) {
-                writer.write("===== ORDER REPORT =====\n\n");
-
-                for (String line : orders) {
-                    String[] data = line.split(",");
-
-                    String orderId = data.length > 0 ? data[0] : "";
-                    String clientId = data.length > 1 ? data[1] : "";
-                    String product = data.length > 2 ? data[2] : "";
-                    String quantity = data.length > 3 ? data[3] : "";
-                    String price = data.length > 4 ? data[4] : "";
-                    String date = data.length > 5 ? data[5] : "";
-
-                    writer.write("Order ID: " + orderId + "\n");
-                    writer.write("Client ID: " + clientId + "\n");
-                    writer.write("Product: " + product + "\n");
-                    writer.write("Quantity: " + quantity + "\n");
-                    writer.write("Price: " + price + "\n");
-                    writer.write("Date: " + date + "\n");
-                    writer.write("------------------------\n");
-                }
-            }
-
-            System.out.println("Order report generated: " + fileName);
-
-        } catch (IOException e) {
-            System.out.println("Error generating report: " + e.getMessage());
+            String r = s.get();
+            return r == null ? "" : r;
+        } catch (Throwable t) {
+            return "";
         }
     }
 }
-
-
