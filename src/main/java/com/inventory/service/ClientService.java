@@ -97,6 +97,30 @@ public class ClientService {
         return safeCall(() -> c.getname()) + " <" + safeCall(() -> c.getemail()) + ">";
     }
 
+    /**
+     * Get all clients from the file.
+     */
+    public List<Client> getAllClients() {
+        List<String> lines = fileService.readAllLines(CLIENT_FILE);
+        if (lines == null) return new ArrayList<>();
+
+        List<Client> clients = new ArrayList<>();
+        for (String line : lines) {
+            String[] parts = line.split(",");
+            if (parts.length >= 5) {
+                String name = parts[0].trim();
+                String email = parts[1].trim();
+                String address = parts[2].trim();
+                String phone = parts[3].trim();
+                String clientId = parts[4].trim();
+                // Assuming registrationDate is not stored, set to empty or current date
+                String regDate = parts.length > 5 ? parts[5].trim() : "";
+                clients.add(new Client(name, email, address, phone, clientId, regDate));
+            }
+        }
+        return clients;
+    }
+
     // Functional wrapper to call client getters that may be present in your model.
     private interface SupplierEx { String get() throws Exception; }
     private String safeCall(SupplierEx s) {
